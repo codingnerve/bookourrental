@@ -64,7 +64,7 @@ export function BookingSearch() {
   const [differentReturn, setDifferentReturn] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [confirmation, setConfirmation] = useState<string | null>(null);
-  const fieldRefs = useRef(new Map<FieldKey, HTMLInputElement | null>());
+  const fieldRefs = useRef(new Map<FieldKey, HTMLElement | null>());
 
   const minDate = useMemo(() => todayISO(), []);
 
@@ -412,6 +412,16 @@ function Segment({
   );
 }
 
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
+  const h = Math.floor(i / 2);
+  const m = i % 2 === 0 ? "00" : "30";
+  const val = `${h.toString().padStart(2, "0")}:${m}`;
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  const label = `${h12.toString().padStart(2, "0")}:${m} ${ampm}`;
+  return { val, label };
+});
+
 interface DateTimeSegmentProps {
   legend: string;
   dateId: string;
@@ -425,7 +435,7 @@ interface DateTimeSegmentProps {
   onDateChange: (value: string) => void;
   onTimeChange: (value: string) => void;
   registerDate: (node: HTMLInputElement | null) => void;
-  registerTime: (node: HTMLInputElement | null) => void;
+  registerTime: (node: HTMLElement | null) => void;
 }
 
 function DateTimeSegment({
@@ -444,6 +454,22 @@ function DateTimeSegment({
   registerTime,
 }: DateTimeSegmentProps) {
   const message = dateError ?? timeError;
+  const localDateRef = useRef<HTMLInputElement | null>(null);
+
+  const openCalendar = () => {
+    if (localDateRef.current) {
+      const el = localDateRef.current;
+      if ("showPicker" in el && typeof (el as unknown as { showPicker: () => void }).showPicker === "function") {
+        try {
+          (el as unknown as { showPicker: () => void }).showPicker();
+        } catch {
+          el.focus();
+        }
+      } else {
+        el.focus();
+      }
+    }
+  };
 
   return (
     <fieldset
@@ -457,21 +483,28 @@ function DateTimeSegment({
         className="pointer-events-none absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-volt transition-transform duration-300 group-focus-within:scale-x-100"
       />
       <legend className="sr-only">{legend} date and time</legend>
-      <span
-        aria-hidden="true"
-        className="mb-2 flex items-center gap-2 text-[0.6875rem] font-bold tracking-[0.14em] text-muted uppercase"
+
+      {/* Segment Header */}
+      <button
+        type="button"
+        onClick={openCalendar}
+        className="mb-2 flex items-center gap-2 text-[0.6875rem] font-bold tracking-[0.14em] text-muted uppercase hover:text-ink transition-colors cursor-pointer"
       >
-        <CalendarDays className="h-4 w-4 text-ink/45" />
+        <CalendarDays className="h-4 w-4 text-ink/60" />
         {legend}
-      </span>
+      </button>
 
       <div className="flex items-center gap-3">
-        <div className="min-w-0 flex-1">
+        {/* Calendar / Date Field */}
+        <div className="relative min-w-0 flex-1 flex items-center">
           <label htmlFor={dateId} className="sr-only">
             {legend} date
           </label>
           <input
-            ref={registerDate}
+            ref={(node) => {
+              localDateRef.current = node;
+              registerDate(node);
+            }}
             id={dateId}
             name={dateId}
             type="date"
@@ -480,28 +513,34 @@ function DateTimeSegment({
             onChange={(event) => onDateChange(event.target.value)}
             aria-invalid={Boolean(dateError)}
             aria-describedby={dateError ? errorId : undefined}
-            className={`${inputClass} [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
+            className={`${inputClass} cursor-pointer [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 hover:[&::-webkit-calendar-picker-indicator]:opacity-100`}
           />
         </div>
 
         <span aria-hidden="true" className="h-6 w-px shrink-0 bg-line" />
 
-        <div className="flex shrink-0 items-center gap-1.5">
-          <Clock3 className="h-3.5 w-3.5 text-ink/40" aria-hidden="true" />
+        {/* Timer / Time Field */}
+        <div className="flex shrink-0 items-center gap-1.5 relative">
+          <Clock3 className="h-4 w-4 text-ink/60 shrink-0 pointer-events-none" aria-hidden="true" />
           <label htmlFor={timeId} className="sr-only">
             {legend} time
           </label>
-          <input
+          <select
             ref={registerTime}
             id={timeId}
             name={timeId}
-            type="time"
             value={timeValue}
             onChange={(event) => onTimeChange(event.target.value)}
             aria-invalid={Boolean(timeError)}
             aria-describedby={timeError ? errorId : undefined}
-            className={`${inputClass} w-[5.5rem] [&::-webkit-calendar-picker-indicator]:hidden`}
-          />
+            className={`${inputClass} cursor-pointer bg-transparent py-0.5 pr-1 font-bold text-[0.9375rem] text-ink focus:outline-none`}
+          >
+            {TIME_OPTIONS.map((opt) => (
+              <option key={opt.val} value={opt.val} className="text-ink bg-white py-1">
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
