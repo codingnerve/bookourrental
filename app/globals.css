@@ -1,26 +1,274 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   BookOurRental — design tokens
+   ========================================================================== */
+
+@theme {
+  /* Brand palette */
+  --color-ink: #0b1220; /* Deep midnight navy — primary surface + type */
+  --color-graphite: #18202d; /* Secondary dark surface */
+  --color-volt: #b8e34b; /* Electric lime — accent only */
+  --color-volt-deep: #9dc736; /* Pressed / hover state for volt fills */
+  --color-cloud: #f5f7f4; /* Warm cloud page background */
+  --color-muted: #697386; /* Secondary type */
+  --color-line: #dde2e8; /* Hairline borders */
+  --color-sky: #ddeeff; /* Optional soft accent */
+  --color-danger: #c0334a; /* Validation only — 6:1 on white */
+
+  /* Typography */
+  --font-sans:
+    var(--font-manrope), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Radii — restrained, editorial */
+  --radius-card: 20px;
+  --radius-tile: 24px;
+  --radius-control: 14px;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Containers */
+  --spacing-shell: 88rem;
+
+  /* Extra-small phones: below this the header call button drops to "Call". */
+  --breakpoint-xs: 22.5rem;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --focus-ring: var(--color-ink);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  border-color: var(--color-line);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cloud);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--color-volt);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Dark surfaces flip the focus ring so it stays visible (3:1+ against navy). */
+.surface-dark {
+  --focus-ring: var(--color-volt);
+}
+
+/* ==========================================================================
+   Layout primitives
+   ========================================================================== */
+
+@utility shell {
+  width: 100%;
+  max-width: var(--spacing-shell);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+
+  @media (width >= 80rem) {
+    padding-inline: 3.5rem;
+  }
+}
+
+/* Hairline + tracked label used to open every major section. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  &::before {
+    content: "";
+    width: 1.75rem;
+    height: 2px;
+    background-color: var(--color-volt);
+    flex: none;
+  }
+}
+
+/* Editorial display type. */
+@utility display-xl {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+}
+
+@utility display-lg {
+  font-weight: 800;
+  letter-spacing: -0.038em;
+  line-height: 1;
+  font-size: clamp(2.125rem, 4.4vw, 3.5rem);
+}
+
+@utility display-md {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+}
+
+/* A volt bar sitting behind the baseline of a highlighted word. */
+@utility mark-volt {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: -0.06em;
+    bottom: 0.02em;
+    height: 0.17em;
+    background-color: var(--color-volt);
+    z-index: -1;
+    border-radius: 2px;
+  }
+}
+
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Scroll reveal
+   Progressive enhancement: markup renders visible, `ScrollReveal` opts the
+   document in by adding `.reveal-on`, then toggles `.is-in` per element.
+   ========================================================================== */
+
+.reveal-on [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+}
+
+.reveal-on [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.75s var(--ease-out-expo),
+    transform 0.75s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on [data-reveal],
+  .reveal-on [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Hero entrance (above the fold — runs on load, not on scroll)
+   ========================================================================== */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes veil-out {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.rise {
+  animation: rise-in 0.9s var(--ease-out-expo) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+.veil {
+  animation: veil-out 1.6s var(--ease-out-expo) both;
+}
+
+@keyframes fade-swap {
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-swap {
+  animation: fade-swap 0.65s var(--ease-out-expo) both;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.panel-in {
+  animation: panel-in 0.5s var(--ease-out-expo) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .veil,
+  .fade-swap,
+  .panel-in {
+    animation: none;
+  }
 }
