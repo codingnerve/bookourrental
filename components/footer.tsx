@@ -5,13 +5,6 @@ import { MapPin, Phone } from "lucide-react";
 
 import { companyContact, footerColumns, siteConfig } from "@/data/site";
 
-const socials = [
-  { label: "Instagram", href: "https://instagram.com", icon: InstagramGlyph },
-  { label: "X", href: "https://x.com", icon: XGlyph },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: LinkedInGlyph },
-  { label: "YouTube", href: "https://youtube.com", icon: YouTubeGlyph },
-];
-
 export function Footer() {
   return (
     <footer className="surface-dark bg-graphite">
@@ -52,22 +45,6 @@ export function Footer() {
                 </span>
               </p>
             </address>
-
-            <ul className="mt-8 flex items-center gap-2.5">
-              {socials.map((social) => (
-                <li key={social.label}>
-                  <a
-                    href={social.href}
-                    aria-label={`${siteConfig.name} on ${social.label}`}
-                    rel="noreferrer noopener"
-                    target="_blank"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors duration-200 hover:border-volt hover:bg-volt hover:text-ink"
-                  >
-                    <social.icon />
-                  </a>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Link columns */}
@@ -108,62 +85,3 @@ export function Footer() {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Simple geometric social glyphs — drawn here to avoid an icon dependency     */
-/* -------------------------------------------------------------------------- */
-
-const glyphProps = {
-  width: 18,
-  height: 18,
-  viewBox: "0 0 24 24",
-  "aria-hidden": true,
-  focusable: false,
-} as const;
-
-function InstagramGlyph() {
-  return (
-    <svg {...glyphProps} fill="none" stroke="currentColor" strokeWidth={1.8}>
-      <rect x="3" y="3" width="18" height="18" rx="5.5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function XGlyph() {
-  return (
-    <svg
-      {...glyphProps}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-    >
-      <path d="M5 5 19 19" />
-      <path d="M19 5 5 19" />
-    </svg>
-  );
-}
-
-function LinkedInGlyph() {
-  return (
-    <svg {...glyphProps} fill="none" stroke="currentColor" strokeWidth={1.8}>
-      <rect x="3" y="3" width="18" height="18" rx="4" />
-      <path d="M7.6 10.4v6.2" strokeLinecap="round" />
-      <circle cx="7.6" cy="7.6" r="0.9" fill="currentColor" stroke="none" />
-      <path
-        d="M11.4 16.6v-6.2m0 2.1a2.4 2.4 0 0 1 4.8 0v4.1"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function YouTubeGlyph() {
-  return (
-    <svg {...glyphProps} fill="none" stroke="currentColor" strokeWidth={1.8}>
-      <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
-      <path d="m10.4 9.6 4.8 2.9-4.8 2.9z" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
