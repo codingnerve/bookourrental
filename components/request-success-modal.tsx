@@ -98,7 +98,7 @@ export function RequestSuccessModal({
       {/* Scrim */}
       <div
         aria-hidden="true"
-        className="panel-in fixed inset-0 bg-ink/70 backdrop-blur-[2px]"
+        className="panel-in fixed inset-0 bg-black/60 backdrop-blur-sm"
       />
 
       <div
@@ -107,68 +107,69 @@ export function RequestSuccessModal({
         aria-modal="true"
         aria-labelledby={`${baseId}-title`}
         aria-describedby={`${baseId}-body`}
-        className="panel-in relative my-auto w-full max-w-[30rem] rounded-[var(--radius-tile)] border border-line bg-white p-7 text-center shadow-[0_40px_90px_-30px_rgba(11,18,32,0.6)] sm:p-10"
+        className="panel-in relative my-auto w-full max-w-[28.5rem] rounded-[24px] border border-line bg-white p-7 text-center shadow-[0_25px_70px_-15px_rgba(0,0,0,0.35)] sm:p-9"
       >
+        {/* Close Button */}
         <button
           ref={closeRef}
           type="button"
           onClick={handleClose}
-          aria-label="Close confirmation"
-          className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border border-line text-muted transition-colors duration-200 hover:border-ink hover:bg-cloud hover:text-ink"
+          aria-label="Close modal"
+          className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
 
-        {/* Success mark */}
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-volt/20">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-volt">
+        {/* Gold Checkmark Badge */}
+        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#FAF6EC]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#D49E28] text-[#D49E28]">
             <Check
-              className="h-5 w-5 text-ink"
-              strokeWidth={3}
+              className="h-5 w-5 stroke-[2.5]"
               aria-hidden="true"
             />
           </span>
         </span>
 
+        {/* Title */}
         <h2
           id={`${baseId}-title`}
-          className="mt-6 text-[1.5rem] leading-tight font-extrabold tracking-[-0.03em] text-balance text-ink sm:text-[1.75rem]"
+          className="mt-6 text-[1.45rem] leading-tight font-extrabold text-gray-900 sm:text-[1.65rem]"
         >
-          Request submitted successfully
+          Request Submitted Successfully
         </h2>
 
+        {/* Body Text */}
         <p
           id={`${baseId}-body`}
-          className="mx-auto mt-4 max-w-sm text-[0.9375rem] leading-relaxed text-muted"
+          className="mx-auto mt-3 max-w-sm text-[0.875rem] sm:text-[0.9375rem] leading-relaxed text-gray-600"
         >
-          Thank you. Your car rental request has been received. Our support team
-          will review your details and get back to you with the available rental
-          options.
+          Thank you. Your car rental request has been received successfully. Our support team will review your details and contact you shortly with available rental options.
         </p>
 
         {summary ? (
-          <p className="mt-5 inline-flex max-w-full items-center gap-2 rounded-full border border-line bg-cloud px-4 py-2 text-[0.8125rem] font-semibold text-ink">
+          <p className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 text-[0.8125rem] font-semibold text-gray-800">
             <span className="truncate">{summary}</span>
           </p>
         ) : null}
 
-        {/* Call panel */}
-        <div className="mt-7 rounded-[16px] bg-cloud p-5">
-          <p className="flex items-center justify-center gap-2 text-[0.8125rem] font-bold text-ink">
-            <Headset className="h-4 w-4 text-muted" aria-hidden="true" />
+        {/* Call Panel */}
+        <div className="mt-6 rounded-2xl bg-[#F8F6F1] border border-[#EFECE4] p-5 text-center">
+          <p className="flex items-center justify-center gap-2 text-sm font-bold text-gray-800">
+            <Headset className="h-4 w-4 text-gray-700" aria-hidden="true" />
             Need urgent assistance?
           </p>
           <a
             href={companyContact.phone.href}
-            className="mt-2.5 block text-[1.125rem] font-extrabold tracking-[-0.03em] whitespace-nowrap text-ink underline decoration-volt decoration-4 underline-offset-[6px] transition-colors hover:text-graphite sm:text-[1.5rem]"
+            className="mt-2 block text-xl font-extrabold tracking-tight text-gray-900 hover:text-black sm:text-2xl"
           >
-            Call now: {companyContact.phone.display}
+            Call Now: {companyContact.phone.display}
           </a>
         </div>
 
-        <p className="mt-6 flex items-center justify-center gap-2 text-[0.6875rem] font-bold tracking-[0.1em] text-muted uppercase">
-          <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-          Secure inquiry — no sensitive payment details
+        {/* Security Footer */}
+        <p className="mt-6 flex items-center justify-center gap-2 text-[0.6875rem] font-bold tracking-wider text-gray-500 uppercase">
+          <ShieldCheck className="h-4 w-4 text-gray-500" aria-hidden="true" />
+          SECURE INQUIRY - NO SENSITIVE PAYMENT DETAILS
         </p>
       </div>
     </div>,
