@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, Menu, Phone, X } from "lucide-react";
 
-import { BrandMark } from "@/components/brand-mark";
 import { companyContact, primaryNav } from "@/data/site";
 
 export function Navbar() {
@@ -59,21 +59,19 @@ export function Navbar() {
             {/* Brand */}
             <Link
               href="/"
-              className="flex items-center gap-2.5 rounded-md"
+              className="flex items-center rounded-md"
               aria-label="BookOurRental — home"
             >
-              <BrandMark inverted={!solid} className="h-9 w-9 shrink-0" />
-              <span
-                className={[
-                  "hidden text-[1.0625rem] leading-none font-extrabold tracking-[-0.03em] sm:inline",
-                  solid ? "text-ink" : "text-white",
-                ].join(" ")}
-              >
-                BookOur
-                <span className={solid ? "text-muted" : "text-white/55"}>
-                  Rental
-                </span>
-              </span>
+              <Image
+                src="/logo.png"
+                alt="BookOurRental - Cabs For Every Journey"
+                width={240}
+                height={65}
+                priority
+                className={`h-9 sm:h-11 w-auto object-contain rounded-lg px-2 py-1 transition-all ${
+                  solid ? "bg-white/90 shadow-sm" : "bg-white/95 shadow-md"
+                }`}
+              />
             </Link>
 
             {/* Desktop navigation */}

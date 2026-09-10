@@ -21,6 +21,14 @@ const isPreview = process.env.NEXT_PUBLIC_PREVIEW === "1";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
+  icons: {
+    icon: [
+      { url: "/logo-icon.jpg", type: "image/jpeg" },
+      { url: "/logo.png", type: "image/png" },
+    ],
+    shortcut: "/logo-icon.jpg",
+    apple: "/logo-icon.jpg",
+  },
   title: {
     default: `${siteConfig.name} | ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.name}`,
