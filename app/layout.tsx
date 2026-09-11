@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import Script from "next/script";
 
 import "./globals.css";
 import { MobileCallBar } from "@/components/mobile-call-bar";
@@ -130,6 +131,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       {/* The bottom padding clears the fixed call bar so the end of the footer
           is never trapped underneath it. */}
       <body className="flex min-h-full flex-col pb-20 xl:pb-0">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18442886296"
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag-aw-18442886296" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-18442886296');
+          `}
+        </Script>
         <a
           href="#main"
           className="sr-only rounded-[12px] focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
