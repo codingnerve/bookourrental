@@ -10,6 +10,12 @@ import {
 } from "lucide-react";
 
 import { RequestSuccessModal } from "@/components/request-success-modal";
+import {
+  getDictionary,
+  localizeDestination,
+  type Dictionary,
+  type Locale,
+} from "@/data/i18n";
 import { destinations } from "@/data/locations";
 
 type FieldKey =
@@ -42,12 +48,16 @@ function todayISO(): string {
 }
 
 /** "Miami, FL → Orlando, FL · Sep 15 – Sep 18" for the confirmation recap. */
-function buildSummary(values: FormValues, returnTo: string): string {
+function buildSummary(
+  values: FormValues,
+  returnTo: string,
+  dateLocale: string,
+): string {
   const day = (iso: string) => {
     const date = new Date(`${iso}T00:00:00`);
     return Number.isNaN(date.getTime())
       ? iso
-      : date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      : date.toLocaleDateString(dateLocale, { month: "short", day: "numeric" });
   };
 
   const route =
@@ -58,7 +68,9 @@ function buildSummary(values: FormValues, returnTo: string): string {
   return `${route} · ${day(values.pickupDate)} – ${day(values.returnDate)}`;
 }
 
-export function BookingSearch() {
+export function BookingSearch({ locale = "en" }: { locale?: Locale }) {
+  const dictionary = getDictionary(locale);
+  const t = dictionary.booking;
   const baseId = useId();
   const [values, setValues] = useState<FormValues>(initialValues);
   const [differentReturn, setDifferentReturn] = useState(false);
@@ -90,28 +102,27 @@ export function BookingSearch() {
     } = values;
 
     if (!pickupLocation.trim()) {
-      next.pickupLocation = "Enter where you want to pick the car up.";
+      next.pickupLocation = t.errors.pickupLocation;
     }
     if (differentReturn && !returnLocation.trim()) {
-      next.returnLocation = "Enter where you will return the car.";
+      next.returnLocation = t.errors.returnLocation;
     }
-    if (!pickupDate) next.pickupDate = "Choose a pickup date.";
-    if (!pickupTime) next.pickupTime = "Choose a pickup time.";
-    if (!returnDate) next.returnDate = "Choose a return date.";
-    if (!returnTime) next.returnTime = "Choose a return time.";
+    if (!pickupDate) next.pickupDate = t.errors.pickupDate;
+    if (!pickupTime) next.pickupTime = t.errors.pickupTime;
+    if (!returnDate) next.returnDate = t.errors.returnDate;
+    if (!returnTime) next.returnTime = t.errors.returnTime;
 
     // ISO date and 24h time strings both sort lexicographically.
     if (pickupDate && returnDate) {
       if (returnDate < pickupDate) {
-        next.returnDate = "Return date cannot be before the pickup date.";
+        next.returnDate = t.errors.returnBeforePickup;
       } else if (
         returnDate === pickupDate &&
         pickupTime &&
         returnTime &&
         returnTime <= pickupTime
       ) {
-        next.returnTime =
-          "For a same-day rental the return time must be later than pickup.";
+        next.returnTime = t.errors.sameDayTime;
       }
     }
 
@@ -159,7 +170,7 @@ export function BookingSearch() {
       // Private-mode or blocked storage is not a reason to block the request.
     }
 
-    setConfirmation(buildSummary(values, returnTo));
+    setConfirmation(buildSummary(values, returnTo, dictionary.dateLocale));
   };
 
   const columns = differentReturn
@@ -181,13 +192,13 @@ export function BookingSearch() {
       className="relative"
     >
       <h2 id={`${baseId}-heading`} className="sr-only">
-        Search for a rental car
+        {t.heading}
       </h2>
 
       <div className="overflow-hidden rounded-[22px] border border-line bg-white shadow-[0_28px_70px_-32px_rgba(11,18,32,0.45)]">
         {/* Command bar header */}
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-line px-5 py-3.5 sm:px-6">
-          <p className="eyebrow text-muted">Reserve a vehicle</p>
+          <p className="eyebrow text-muted">{t.eyebrow}</p>
 
           <label className="flex cursor-pointer items-center gap-2.5 text-[0.8125rem] font-semibold text-ink">
             <input
@@ -205,7 +216,7 @@ export function BookingSearch() {
               className="h-3.5 w-3.5 text-muted"
               aria-hidden="true"
             />
-            Return car to a different location
+            {t.differentReturn}
           </label>
         </div>
 
@@ -216,7 +227,7 @@ export function BookingSearch() {
         >
           <Segment
             icon={<MapPin className="h-4 w-4" aria-hidden="true" />}
-            label="Pickup location"
+            label={t.pickupLocation}
             htmlFor={`${baseId}-pickupLocation`}
             error={errors.pickupLocation}
             errorId={`${baseId}-pickupLocation-error`}
@@ -230,7 +241,7 @@ export function BookingSearch() {
               type="text"
               list={`${baseId}-cities`}
               autoComplete="off"
-              placeholder="City or airport"
+              placeholder={t.locationPlaceholder}
               value={values.pickupLocation}
               onChange={(event) =>
                 setField("pickupLocation", event.target.value)
@@ -248,7 +259,7 @@ export function BookingSearch() {
           {differentReturn ? (
             <Segment
               icon={<MapPin className="h-4 w-4" aria-hidden="true" />}
-              label="Return location"
+              label={t.returnLocation}
               htmlFor={`${baseId}-returnLocation`}
               error={errors.returnLocation}
               errorId={`${baseId}-returnLocation-error`}
@@ -262,7 +273,7 @@ export function BookingSearch() {
                 type="text"
                 list={`${baseId}-cities`}
                 autoComplete="off"
-                placeholder="City or airport"
+                placeholder={t.locationPlaceholder}
                 value={values.returnLocation}
                 onChange={(event) =>
                   setField("returnLocation", event.target.value)
@@ -279,7 +290,8 @@ export function BookingSearch() {
           ) : null}
 
           <DateTimeSegment
-            legend="Pickup"
+            legend={t.pickup}
+            t={t}
             dateId={`${baseId}-pickupDate`}
             timeId={`${baseId}-pickupTime`}
             dateValue={values.pickupDate}
@@ -299,7 +311,8 @@ export function BookingSearch() {
           />
 
           <DateTimeSegment
-            legend="Return"
+            legend={t.return}
+            t={t}
             dateId={`${baseId}-returnDate`}
             timeId={`${baseId}-returnTime`}
             dateValue={values.returnDate}
@@ -328,7 +341,7 @@ export function BookingSearch() {
                 className="h-5 w-5 transition-transform duration-300 group-hover:scale-110"
                 aria-hidden="true"
               />
-              <span>Search Cars</span>
+              <span>{t.submit}</span>
             </button>
           </div>
         </div>
@@ -341,16 +354,18 @@ export function BookingSearch() {
             key={destination.id}
             value={`${destination.city}, ${destination.state}`}
           >
-            {destination.airportCode} · {destination.airportName}
+            {destination.airportCode} ·{" "}
+            {localizeDestination(destination, locale).airportName}
           </option>
         ))}
       </datalist>
 
       <p className="mt-4 text-center text-[0.8125rem] leading-relaxed text-muted xl:text-left">
-        Cancellation terms are listed on every vehicle before you confirm.
+        {t.note}
       </p>
 
       <RequestSuccessModal
+        locale={locale}
         open={confirmation !== null}
         summary={confirmation ?? undefined}
         onClose={() => setConfirmation(null)}
@@ -424,6 +439,7 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
 
 interface DateTimeSegmentProps {
   legend: string;
+  t: Dictionary["booking"];
   dateId: string;
   timeId: string;
   dateValue: string;
@@ -440,6 +456,7 @@ interface DateTimeSegmentProps {
 
 function DateTimeSegment({
   legend,
+  t,
   dateId,
   timeId,
   dateValue,
@@ -482,7 +499,7 @@ function DateTimeSegment({
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-volt transition-transform duration-300 group-focus-within:scale-x-100"
       />
-      <legend className="sr-only">{legend} date and time</legend>
+      <legend className="sr-only">{t.dateTimeLegend(legend)}</legend>
 
       {/* Segment Header */}
       <button
@@ -498,7 +515,7 @@ function DateTimeSegment({
         {/* Calendar / Date Field */}
         <div className="relative min-w-0 flex-1 flex items-center">
           <label htmlFor={dateId} className="sr-only">
-            {legend} date
+            {t.dateLabel(legend)}
           </label>
           <input
             ref={(node) => {
@@ -523,7 +540,7 @@ function DateTimeSegment({
         <div className="flex shrink-0 items-center gap-1.5 relative">
           <Clock3 className="h-4 w-4 text-ink/60 shrink-0 pointer-events-none" aria-hidden="true" />
           <label htmlFor={timeId} className="sr-only">
-            {legend} time
+            {t.timeLabel(legend)}
           </label>
           <select
             ref={registerTime}

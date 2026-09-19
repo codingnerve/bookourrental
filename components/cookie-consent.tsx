@@ -3,6 +3,8 @@
 import { useId, useState, useSyncExternalStore } from "react";
 import { Cookie } from "lucide-react";
 
+import { getDictionary, type Locale } from "@/data/i18n";
+
 const STORAGE_KEY = "bor:cookie-consent";
 
 /** Sentinel snapshots: nothing stored yet, and "not yet known" during SSR. */
@@ -52,7 +54,8 @@ function getServerSnapshot(): string {
   return PENDING;
 }
 
-export function CookieConsent() {
+export function CookieConsent({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).cookies;
   const baseId = useId();
   const [managing, setManaging] = useState(false);
   const [analytics, setAnalytics] = useState(false);
@@ -103,37 +106,36 @@ export function CookieConsent() {
               id={`${baseId}-title`}
               className="text-[0.9375rem] font-extrabold tracking-[-0.01em] text-ink"
             >
-              Cookies on BookOurRental
+              {t.title}
             </h2>
             <p
               id={`${baseId}-body`}
               className="mt-1.5 text-[0.8125rem] leading-relaxed text-muted"
             >
-              We use essential cookies to run the site. Optional cookies help us
-              understand how the search is used.
+              {t.body}
             </p>
           </div>
         </div>
 
         {managing ? (
           <fieldset className="mt-4 space-y-1 border-t border-line pt-4">
-            <legend className="sr-only">Cookie preferences</legend>
+            <legend className="sr-only">{t.preferencesLegend}</legend>
 
             <PreferenceRow
-              label="Strictly necessary"
-              description="Required for search, security and your session."
+              label={t.necessary.label}
+              description={t.necessary.description}
               checked
               disabled
             />
             <PreferenceRow
-              label="Analytics"
-              description="Anonymous usage data to improve the booking flow."
+              label={t.analytics.label}
+              description={t.analytics.description}
               checked={analytics}
               onChange={setAnalytics}
             />
             <PreferenceRow
-              label="Marketing"
-              description="Used to measure campaigns. Off unless you enable it."
+              label={t.marketing.label}
+              description={t.marketing.description}
               checked={marketing}
               onChange={setMarketing}
             />
@@ -146,7 +148,7 @@ export function CookieConsent() {
             onClick={() => persist({ analytics: true, marketing: true })}
             className="rounded-[12px] bg-ink px-4 py-3 text-sm font-bold text-white transition-colors duration-200 hover:bg-graphite"
           >
-            Accept all
+            {t.acceptAll}
           </button>
 
           <div className="flex gap-2">
@@ -160,14 +162,14 @@ export function CookieConsent() {
               aria-expanded={managing}
               className="flex-1 rounded-[12px] border border-line px-4 py-2.5 text-[0.8125rem] font-bold text-ink transition-colors duration-200 hover:bg-cloud"
             >
-              {managing ? "Save preferences" : "Manage preferences"}
+              {managing ? t.save : t.manage}
             </button>
             <button
               type="button"
               onClick={() => persist({ analytics: false, marketing: false })}
               className="flex-1 rounded-[12px] border border-line px-4 py-2.5 text-[0.8125rem] font-bold text-muted transition-colors duration-200 hover:bg-cloud hover:text-ink"
             >
-              Reject optional
+              {t.reject}
             </button>
           </div>
         </div>

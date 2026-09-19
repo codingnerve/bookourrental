@@ -1,13 +1,11 @@
 import Link from "next/link";
 import { ArrowRight, Check, MapPin, Search, Smartphone } from "lucide-react";
 
-const points = [
-  "The same search, fields and filters as the desktop site",
-  "Vehicle details sized for a phone screen, not squeezed into it",
-  "Your reservation summary travels with you in your inbox",
-];
+import { getDictionary, type Dictionary, type Locale } from "@/data/i18n";
 
-export function MobileBooking() {
+export function MobileBooking({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).mobileBooking;
+
   return (
     <section
       aria-labelledby="mobile-heading"
@@ -16,24 +14,22 @@ export function MobileBooking() {
       <div className="shell grid grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-20">
         {/* Copy */}
         <div data-reveal>
-          <p className="eyebrow text-muted">06 — On the move</p>
+          <p className="eyebrow text-muted">{t.eyebrow}</p>
 
           <h2
             id="mobile-heading"
             className="display-lg mt-5 max-w-xl text-balance text-ink"
           >
-            Your rental plans, wherever the{" "}
-            <span className="mark-volt">trip takes you.</span>
+            {t.titlePrefix}
+            <span className="mark-volt">{t.titleMark}</span>
           </h2>
 
           <p className="mt-6 max-w-lg text-[1.0625rem] leading-relaxed text-muted">
-            There is no separate app to download. BookOurRental is built to work
-            the same way in your phone&rsquo;s browser as it does on a laptop —
-            search, compare and reserve from the gate, the cab or the kerb.
+            {t.body}
           </p>
 
           <ul className="mt-9 space-y-4">
-            {points.map((point) => (
+            {t.points.map((point) => (
               <li key={point} className="flex gap-3.5">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink">
                   <Check className="h-3 w-3 text-volt" aria-hidden="true" />
@@ -50,7 +46,7 @@ export function MobileBooking() {
               href="#booking"
               className="group inline-flex items-center gap-2.5 rounded-[16px] bg-ink px-7 py-4 text-base font-extrabold tracking-[-0.01em] text-white transition-colors duration-200 hover:bg-graphite"
             >
-              Book From Your Phone
+              {t.cta}
               <ArrowRight
                 className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-1"
                 aria-hidden="true"
@@ -59,7 +55,7 @@ export function MobileBooking() {
 
             <p className="flex items-center gap-2 text-[0.8125rem] font-semibold text-muted">
               <Smartphone className="h-4 w-4" aria-hidden="true" />
-              No app install required
+              {t.noApp}
             </p>
           </div>
         </div>
@@ -74,7 +70,7 @@ export function MobileBooking() {
             className="absolute top-[-30%] left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-volt/12 blur-3xl"
           />
 
-          <PhoneMockup />
+          <PhoneMockup t={t.mockup} />
         </div>
       </div>
     </section>
@@ -85,7 +81,11 @@ export function MobileBooking() {
  * Static, non-interactive rendering of the booking UI at phone width. Hidden
  * from assistive tech — everything it depicts is stated in the copy beside it.
  */
-function PhoneMockup() {
+function PhoneMockup({
+  t,
+}: {
+  t: Dictionary["mobileBooking"]["mockup"];
+}) {
   return (
     <div
       aria-hidden="true"
@@ -106,7 +106,7 @@ function PhoneMockup() {
         {/* Booking card */}
         <div className="mt-4 rounded-2xl border border-line bg-white p-3.5">
           <p className="text-[0.5rem] font-bold tracking-[0.16em] text-muted uppercase">
-            Pickup location
+            {t.pickupLocation}
           </p>
           <p className="mt-1 flex items-center gap-1.5 text-[0.8125rem] font-bold text-ink">
             <MapPin className="h-3 w-3 text-muted" />
@@ -116,31 +116,31 @@ function PhoneMockup() {
           <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line pt-3">
             <div>
               <p className="text-[0.5rem] font-bold tracking-[0.16em] text-muted uppercase">
-                Pickup
+                {t.pickup}
               </p>
               <p className="mt-1 text-[0.75rem] font-bold text-ink">
-                Sep 15 · 10:00
+                {t.pickupWhen}
               </p>
             </div>
             <div>
               <p className="text-[0.5rem] font-bold tracking-[0.16em] text-muted uppercase">
-                Return
+                {t.return}
               </p>
               <p className="mt-1 text-[0.75rem] font-bold text-ink">
-                Sep 18 · 10:00
+                {t.returnWhen}
               </p>
             </div>
           </div>
 
           <div className="mt-3.5 flex items-center justify-center gap-1.5 rounded-xl bg-volt py-2.5 text-[0.75rem] font-extrabold text-ink">
             <Search className="h-3 w-3" />
-            Search Cars
+            {t.search}
           </div>
         </div>
 
         {/* Result preview */}
         <p className="mt-4 text-[0.5625rem] font-bold tracking-[0.16em] text-muted uppercase">
-          12 vehicles
+          {t.results}
         </p>
 
         <div className="mt-2 space-y-2">
@@ -148,7 +148,7 @@ function PhoneMockup() {
             <span className="h-9 w-12 shrink-0 rounded-lg bg-gradient-to-br from-graphite to-ink" />
             <div className="min-w-0 flex-1">
               <p className="text-[0.75rem] font-bold text-ink">Toyota RAV4</p>
-              <p className="text-[0.625rem] text-muted">5 seats · Automatic</p>
+              <p className="text-[0.625rem] text-muted">{t.seatsAutomatic}</p>
             </div>
             <p className="text-[0.75rem] font-extrabold text-ink">$58</p>
           </div>
@@ -159,7 +159,7 @@ function PhoneMockup() {
               <p className="text-[0.75rem] font-bold text-ink">
                 Volkswagen Golf
               </p>
-              <p className="text-[0.625rem] text-muted">5 seats · 2 bags</p>
+              <p className="text-[0.625rem] text-muted">{t.seatsBags}</p>
             </div>
             <p className="text-[0.75rem] font-extrabold text-ink">$42</p>
           </div>

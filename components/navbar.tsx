@@ -3,11 +3,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, Menu, Phone, X } from "lucide-react";
+import { ArrowRight, Languages, Menu, Phone, X } from "lucide-react";
 
-import { companyContact, primaryNav } from "@/data/site";
+import { getDictionary, homeHref, type Locale } from "@/data/i18n";
+import { companyContact, type NavLink } from "@/data/site";
 
-export function Navbar() {
+export function Navbar({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).nav;
+  const languageSwitch = t.languageSwitch;
+  const mobileLinks: (NavLink & { lang?: string })[] = [
+    ...t.links,
+    languageSwitch,
+  ];
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -22,7 +29,7 @@ export function Navbar() {
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
     toggleRef.current?.focus();
-  }, []);
+  }, [setMenuOpen]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -55,12 +62,12 @@ export function Navbar() {
         ].join(" ")}
       >
         <div className="shell">
-          <div className="flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
+          <div className="flex h-[4.5rem] items-center justify-between gap-6 lg:h-20 xl:gap-4 2xl:gap-6">
             {/* Brand */}
             <Link
-              href="/"
-              className="flex items-center rounded-md"
-              aria-label="BookOurRental — home"
+              href={homeHref[locale]}
+              className="flex shrink-0 items-center rounded-md"
+              aria-label={t.homeAria}
             >
               <Image
                 src="/logo.png"
@@ -76,16 +83,16 @@ export function Navbar() {
 
             {/* Desktop navigation */}
             <nav
-              aria-label="Primary"
-              className="hidden items-center gap-1 lg:flex"
+              aria-label={t.primaryAria}
+              className="hidden items-center gap-0.5 xl:flex 2xl:gap-1"
             >
-              {primaryNav.map((link) => (
+              {t.links.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
                   className={[
-                    "relative rounded-md px-3.5 py-2 text-[0.9375rem] font-semibold transition-colors",
-                    "after:absolute after:inset-x-3.5 after:-bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:bg-volt after:transition-transform after:duration-300 hover:after:scale-x-100",
+                    "relative rounded-md px-2.5 py-2 2xl:px-3.5 text-[0.9375rem] font-semibold whitespace-nowrap transition-colors",
+                    "after:absolute after:inset-x-2.5 2xl:after:inset-x-3.5 after:-bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:bg-volt after:transition-transform after:duration-300 hover:after:scale-x-100",
                     solid
                       ? "text-ink/75 hover:text-ink"
                       : "text-white/80 hover:text-white",
@@ -94,10 +101,25 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              {/* Language tab — the same homepage in the other language. */}
+              <Link
+                href={languageSwitch.href}
+                hrefLang={languageSwitch.lang}
+                lang={languageSwitch.lang}
+                className={[
+                  "ml-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 2xl:px-3.5 text-[0.9375rem] font-bold whitespace-nowrap transition-colors",
+                  solid
+                    ? "border-ink/15 text-ink hover:border-ink hover:bg-ink hover:text-white"
+                    : "border-white/30 text-white hover:border-white/60 hover:bg-white/10",
+                ].join(" ")}
+              >
+                <Languages className="h-4 w-4 text-volt" aria-hidden="true" />
+                {languageSwitch.label}
+              </Link>
             </nav>
 
             {/* Desktop actions */}
-            <div className="hidden items-center gap-1.5 lg:flex">
+            <div className="hidden items-center gap-1.5 xl:flex">
               <a
                 href={companyContact.phone.href}
                 className={[
@@ -113,19 +135,19 @@ export function Navbar() {
               <Link
                 href="/contact"
                 className={[
-                  "rounded-md px-3 py-2 text-[0.9375rem] font-semibold transition-colors",
+                  "rounded-md px-3 py-2 text-[0.9375rem] font-semibold whitespace-nowrap transition-colors",
                   solid
                     ? "text-muted hover:text-ink"
                     : "text-white/70 hover:text-white",
                 ].join(" ")}
               >
-                Contact
+                {t.contact}
               </Link>
               <Link
                 href="#booking"
-                className="group ml-2 inline-flex items-center gap-2 rounded-[14px] bg-volt px-5 py-3 text-[0.9375rem] font-bold text-ink transition-colors duration-200 hover:bg-volt-deep"
+                className="group ml-2 inline-flex items-center gap-2 rounded-[14px] whitespace-nowrap bg-volt px-5 py-3 text-[0.9375rem] font-bold text-ink transition-colors duration-200 hover:bg-volt-deep"
               >
-                Book a Car
+                {t.book}
                 <ArrowRight
                   className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
                   aria-hidden="true"
@@ -135,7 +157,7 @@ export function Navbar() {
 
             {/* Mobile actions — the number rides in the sticky bar itself, so
                 it stays on screen the whole way down the page. */}
-            <div className="flex items-center gap-2 lg:hidden">
+            <div className="flex items-center gap-2 xl:hidden">
               <a
                 href={companyContact.phone.href}
                 className={[
@@ -152,7 +174,7 @@ export function Navbar() {
                 <span className="hidden whitespace-nowrap xs:inline">
                   {companyContact.phone.display}
                 </span>
-                <span className="whitespace-nowrap xs:hidden">Call</span>
+                <span className="whitespace-nowrap xs:hidden">{t.call}</span>
               </a>
               <button
                 ref={toggleRef}
@@ -160,7 +182,7 @@ export function Navbar() {
                 onClick={() => setMenuOpen((open) => !open)}
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-label={menuOpen ? t.closeMenu : t.openMenu}
                 className={[
                   "inline-flex h-11 w-11 items-center justify-center rounded-[12px] border transition-colors",
                   solid
@@ -185,14 +207,15 @@ export function Navbar() {
       <div
         id="mobile-menu"
         hidden={!menuOpen}
-        className="fixed inset-x-0 top-[4.5rem] bottom-0 z-40 overflow-y-auto overscroll-contain border-t border-line bg-white lg:hidden"
+        className="fixed inset-x-0 top-[4.5rem] bottom-0 lg:top-20 z-40 overflow-y-auto overscroll-contain border-t border-line bg-white xl:hidden"
       >
-        <nav aria-label="Mobile" className="shell py-5">
+        <nav aria-label={t.mobileAria} className="shell py-5">
           <ul className="divide-y divide-line">
-            {primaryNav.map((link) => (
+            {mobileLinks.map((link) => (
               <li key={link.label}>
                 <Link
                   href={link.href}
+                  lang={link.lang}
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center justify-between py-4 text-lg font-bold tracking-[-0.02em] text-ink"
                 >
@@ -218,7 +241,7 @@ export function Navbar() {
               onClick={() => setMenuOpen(false)}
               className="block rounded-[14px] border border-line px-4 py-3.5 text-center text-[0.9375rem] font-bold text-ink"
             >
-              Contact
+              {t.contact}
             </Link>
           </div>
         </nav>

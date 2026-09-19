@@ -6,15 +6,19 @@ import { useRef, useState } from "react";
 import { ArrowRight, Plane, Building2, Car } from "lucide-react";
 
 import { SectionHeading } from "@/components/section-heading";
+import { getDictionary, localizeDestination, type Locale } from "@/data/i18n";
 import { destinations } from "@/data/locations";
 
-export function Destinations() {
+export function Destinations({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).destinations;
   const [activeId, setActiveId] = useState(destinations[0].id);
   const tabRefs = useRef(new Map<string, HTMLButtonElement | null>());
 
   const active =
     destinations.find((destination) => destination.id === activeId) ??
     destinations[0];
+  // Display copy only — the search link below keeps the catalogue's city name.
+  const activeCopy = localizeDestination(active, locale);
 
   const focusTab = (id: string) => {
     setActiveId(id);
@@ -56,20 +60,21 @@ export function Destinations() {
     >
       <SectionHeading
         id="destinations-heading"
-        eyebrow="03 — Pickup cities"
+        eyebrow={t.eyebrow}
         title={
           <>
-            Where are you <span className="mark-volt">heading?</span>
+            {t.titlePrefix}
+            <span className="mark-volt">{t.titleMark}</span>
           </>
         }
-        subtitle="Six markets, airport counters and downtown desks. Pick a city to see what is on the ground there."
+        subtitle={t.subtitle}
       />
 
       <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10">
         {/* City selector */}
         <div
           role="tablist"
-          aria-label="Pickup cities"
+          aria-label={t.tablistLabel}
           aria-orientation="vertical"
           data-reveal
           className="hide-scrollbar -mx-5 flex gap-3 overflow-x-auto px-5 lg:mx-0 lg:flex-col lg:gap-0 lg:overflow-visible lg:px-0"
@@ -108,7 +113,7 @@ export function Destinations() {
                   />
                   <span className="min-w-0">
                     <span className="block text-lg leading-tight font-extrabold tracking-[-0.03em] whitespace-nowrap lg:text-2xl">
-                      {destination.city}
+                      {localizeDestination(destination, locale).city}
                       <span
                         className={
                           selected
@@ -125,8 +130,8 @@ export function Destinations() {
                         selected ? "text-muted" : "text-muted/70",
                       ].join(" ")}
                     >
-                      {destination.airportCode} · From ${destination.fromPrice}
-                      /day
+                      {destination.airportCode} ·{" "}
+                      {t.fromPerDay(destination.fromPrice)}
                     </span>
                   </span>
                 </span>
@@ -163,42 +168,42 @@ export function Destinations() {
             </p>
 
             <h3 className="mt-5 text-[2.25rem] leading-[1.02] font-extrabold tracking-[-0.04em] text-white sm:text-[3rem]">
-              {active.city}
+              {activeCopy.city}
             </h3>
 
             <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-white/70">
-              {active.note}
+              {activeCopy.note}
             </p>
 
             <dl className="mt-7 grid grid-cols-1 gap-px overflow-hidden rounded-[16px] border border-white/15 bg-white/15 sm:grid-cols-3">
               <PanelStat
                 icon={<Plane className="h-4 w-4" aria-hidden="true" />}
-                term="Airport"
-                value={`${active.airportCode} · ${active.airportName}`}
+                term={t.airport}
+                value={`${active.airportCode} · ${activeCopy.airportName}`}
               />
               <PanelStat
                 icon={<Building2 className="h-4 w-4" aria-hidden="true" />}
-                term="City pickups"
-                value={`${active.cityPickups} locations`}
+                term={t.cityPickups}
+                value={t.locationsCount(active.cityPickups)}
               />
               <PanelStat
                 icon={<Car className="h-4 w-4" aria-hidden="true" />}
-                term="Vehicle classes"
-                value={`${active.vehicleClasses} available`}
+                term={t.vehicleClasses}
+                value={t.availableCount(active.vehicleClasses)}
               />
             </dl>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-5">
               <p className="leading-none">
                 <span className="block text-[0.6875rem] font-bold tracking-[0.14em] text-white/55 uppercase">
-                  Starting from
+                  {t.startingFrom}
                 </span>
                 <span className="mt-2 inline-flex items-baseline gap-1">
                   <span className="text-[2rem] font-extrabold tracking-[-0.04em] text-volt">
                     ${active.fromPrice}
                   </span>
                   <span className="text-sm font-semibold text-white/60">
-                    /day
+                    {t.perDay}
                   </span>
                 </span>
               </p>
@@ -207,7 +212,7 @@ export function Destinations() {
                 href={`/cars?pickup=${encodeURIComponent(`${active.city}, ${active.state}`)}`}
                 className="group inline-flex items-center gap-2 rounded-[14px] bg-white px-6 py-3.5 text-[0.9375rem] font-bold text-ink transition-colors duration-200 hover:bg-volt"
               >
-                Explore {active.city} rentals
+                {t.explore(activeCopy.city)}
                 <ArrowRight
                   className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                   aria-hidden="true"

@@ -1,6 +1,7 @@
 import { ListChecks, Lock, MapPin, Search } from "lucide-react";
 
-import { trustItems, type TrustIcon } from "@/data/site";
+import { getDictionary, type Locale } from "@/data/i18n";
+import type { TrustIcon } from "@/data/site";
 
 const icons: Record<TrustIcon, typeof Search> = {
   search: Search,
@@ -9,14 +10,16 @@ const icons: Record<TrustIcon, typeof Search> = {
   lock: Lock,
 };
 
-export function TrustStrip() {
+export function TrustStrip({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).trust;
+
   return (
-    <section aria-label="Why travellers book here" className="shell mt-14 lg:mt-20">
+    <section aria-label={t.ariaLabel} className="shell mt-14 lg:mt-20">
       <ul
         data-reveal
         className="grid grid-cols-2 gap-x-8 gap-y-6 border-y border-line py-6 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line"
       >
-        {trustItems.map((item) => {
+        {t.items.map((item) => {
           const Icon = icons[item.icon];
           return (
             <li

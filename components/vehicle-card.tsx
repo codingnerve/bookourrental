@@ -2,23 +2,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Briefcase, Cog, Fuel, Users } from "lucide-react";
 
+import { getDictionary, vehicleLabels, type Locale } from "@/data/i18n";
 import type { Vehicle } from "@/data/vehicles";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
   /** First card in the grid loads eagerly; the rest stay lazy. */
   priority?: boolean;
+  locale?: Locale;
 }
 
-export function VehicleCard({ vehicle, priority = false }: VehicleCardProps) {
+export function VehicleCard({
+  vehicle,
+  priority = false,
+  locale = "en",
+}: VehicleCardProps) {
+  const t = getDictionary(locale).vehicleCard;
+  const labels = vehicleLabels(vehicle, locale);
+
   const specs = [
-    { icon: Users, label: `${vehicle.passengers} seats` },
-    {
-      icon: Briefcase,
-      label: `${vehicle.luggage} ${vehicle.luggage === 1 ? "bag" : "bags"}`,
-    },
-    { icon: Cog, label: vehicle.transmission },
-    { icon: Fuel, label: vehicle.fuel },
+    { icon: Users, label: t.seats(vehicle.passengers) },
+    { icon: Briefcase, label: t.bags(vehicle.luggage) },
+    { icon: Cog, label: labels.transmission },
+    { icon: Fuel, label: labels.fuel },
   ];
 
   return (
@@ -34,7 +40,7 @@ export function VehicleCard({ vehicle, priority = false }: VehicleCardProps) {
           className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
         />
         <span className="absolute top-3.5 left-3.5 rounded-full bg-ink/85 px-3 py-1.5 text-[0.6875rem] font-bold tracking-[0.12em] text-white uppercase backdrop-blur-sm">
-          {vehicle.category}
+          {labels.category}
         </span>
         {/* Volt rule sweeps in on hover */}
         <span
@@ -49,7 +55,7 @@ export function VehicleCard({ vehicle, priority = false }: VehicleCardProps) {
           {vehicle.name}
         </h3>
         <p className="mt-1 text-sm font-medium text-muted">
-          {vehicle.bodyStyle}
+          {labels.bodyStyle}
         </p>
 
         {/* Specs on one clean horizontal line, not a pile of pills */}
@@ -66,22 +72,24 @@ export function VehicleCard({ vehicle, priority = false }: VehicleCardProps) {
         <div className="mt-auto flex items-end justify-between gap-4 pt-6">
           <p className="leading-none">
             <span className="block text-[0.6875rem] font-bold tracking-[0.14em] text-muted uppercase">
-              From
+              {t.from}
             </span>
             <span className="mt-1.5 inline-flex items-baseline gap-1">
               <span className="text-[1.75rem] font-extrabold tracking-[-0.04em] text-ink">
                 ${vehicle.pricePerDay}
               </span>
-              <span className="text-sm font-semibold text-muted">/day</span>
+              <span className="text-sm font-semibold text-muted">
+                {t.perDay}
+              </span>
             </span>
           </p>
 
           <Link
             href={`/cars/${vehicle.id}`}
-            aria-label={`View details for the ${vehicle.name}`}
+            aria-label={t.viewDetailsAria(vehicle.name)}
             className="inline-flex items-center gap-1.5 rounded-[12px] border border-line px-4 py-2.5 text-sm font-bold text-ink transition-colors duration-200 group-hover:border-ink group-hover:bg-ink group-hover:text-white"
           >
-            View Car
+            {t.viewCar}
             <ArrowUpRight
               className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               aria-hidden="true"

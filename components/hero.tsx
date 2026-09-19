@@ -2,7 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowDown } from "lucide-react";
 
-export function Hero() {
+import { getDictionary, type Locale } from "@/data/i18n";
+
+export function Hero({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).hero;
+
   return (
     <section
       className="surface-dark relative isolate flex min-h-[38rem] flex-col justify-end overflow-hidden bg-ink pt-28 pb-24 sm:min-h-[42rem] lg:min-h-[92svh] lg:pt-40 lg:pb-40"
@@ -12,7 +16,7 @@ export function Hero() {
       <div className="veil absolute inset-0 -z-20">
         <Image
           src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=2400&q=80"
-          alt="A white sedan parked on a coastal highway above the Pacific, with headlands rolling into the distance"
+          alt={t.imageAlt}
           fill
           priority
           sizes="100vw"
@@ -41,7 +45,7 @@ export function Hero() {
             className="rise eyebrow text-white/70"
             style={{ "--rise-delay": "80ms" } as React.CSSProperties}
           >
-            Move freely
+            {t.eyebrow}
           </p>
 
           <h1
@@ -49,17 +53,17 @@ export function Hero() {
             className="rise display-xl mt-6 text-balance text-white"
             style={{ "--rise-delay": "160ms" } as React.CSSProperties}
           >
-            Your next drive
+            {t.titleLine1}
             <br />
-            starts <span className="mark-volt">here.</span>
+            {t.titleLine2}
+            <span className="mark-volt">{t.titleMark}</span>
           </h1>
 
           <p
             className="rise mt-7 max-w-xl text-lg leading-relaxed text-white/75 sm:text-xl"
             style={{ "--rise-delay": "260ms" } as React.CSSProperties}
           >
-            Compare vehicles, choose your pickup point, and reserve a car that
-            fits the way you travel.
+            {t.body}
           </p>
 
           <div
@@ -70,7 +74,7 @@ export function Hero() {
               href="#booking"
               className="group inline-flex items-center justify-center gap-2.5 rounded-[16px] bg-volt px-7 py-4 text-base font-extrabold tracking-[-0.01em] text-ink transition-colors duration-200 hover:bg-volt-deep"
             >
-              Find a Car
+              {t.primaryCta}
               <ArrowRight
                 className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-1"
                 aria-hidden="true"
@@ -81,7 +85,7 @@ export function Hero() {
               href="#fleet"
               className="inline-flex items-center justify-center gap-2.5 rounded-[16px] border border-white/30 px-7 py-4 text-base font-bold text-white backdrop-blur-sm transition-colors duration-200 hover:border-white/60 hover:bg-white/10"
             >
-              Explore Fleet
+              {t.secondaryCta}
             </Link>
           </div>
         </div>
@@ -93,7 +97,7 @@ export function Hero() {
         className="absolute right-8 bottom-40 hidden items-center gap-3 xl:flex"
       >
         <span className="text-[0.625rem] font-bold tracking-[0.28em] text-white/45 uppercase [writing-mode:vertical-rl]">
-          Scroll
+          {t.scroll}
         </span>
         <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25">
           <ArrowDown className="h-4 w-4 animate-bounce text-volt" />

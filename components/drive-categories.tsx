@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { SectionHeading } from "@/components/section-heading";
 import { driveCategories, type DriveCategory } from "@/data/categories";
+import { getDictionary, localizeCategory, type Locale } from "@/data/i18n";
 
 /** Footprints inside the 12-column editorial grid. */
 const spanClasses: Record<DriveCategory["span"], string> = {
@@ -13,7 +14,9 @@ const spanClasses: Record<DriveCategory["span"], string> = {
   wide: "lg:col-span-12 min-h-[20rem] lg:min-h-[22rem]",
 };
 
-export function DriveCategories() {
+export function DriveCategories({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).collections;
+
   return (
     <section
       id="collections"
@@ -23,13 +26,14 @@ export function DriveCategories() {
       <div className="shell">
         <SectionHeading
           id="collections-heading"
-          eyebrow="02 — Collections"
+          eyebrow={t.eyebrow}
           title={
             <>
-              Choose your <span className="mark-volt">drive.</span>
+              {t.titlePrefix}
+              <span className="mark-volt">{t.titleMark}</span>
             </>
           }
-          subtitle="Four ways to travel, each grouped around what the trip actually asks of a car."
+          subtitle={t.subtitle}
           tone="dark"
         />
 
@@ -43,7 +47,11 @@ export function DriveCategories() {
               }
               className={`relative ${spanClasses[category.span]}`}
             >
-              <CategoryTile category={category} feature={category.span === "feature"} />
+              <CategoryTile
+                category={localizeCategory(category, locale)}
+                feature={category.span === "feature"}
+                fromPerDay={t.fromPerDay}
+              />
             </li>
           ))}
         </ul>
@@ -55,9 +63,11 @@ export function DriveCategories() {
 function CategoryTile({
   category,
   feature,
+  fromPerDay,
 }: {
   category: DriveCategory;
   feature: boolean;
+  fromPerDay: (price: number) => string;
 }) {
   return (
     <Link
@@ -80,7 +90,7 @@ function CategoryTile({
       <div className="relative flex items-end justify-between gap-6">
         <div className="min-w-0">
           <p className="text-[0.6875rem] font-bold tracking-[0.16em] text-volt uppercase">
-            From ${category.fromPrice}/day
+            {fromPerDay(category.fromPrice)}
           </p>
           <h3
             className={`mt-3 font-extrabold tracking-[-0.035em] text-white ${

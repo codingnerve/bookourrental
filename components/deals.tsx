@@ -2,9 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 
-import { featuredDeal } from "@/data/site";
+import { getDictionary, type Locale } from "@/data/i18n";
 
-export function Deals() {
+export function Deals({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).deals;
+  const featuredDeal = t.deal;
+
   return (
     <section
       id="deals"
@@ -60,7 +63,7 @@ export function Deals() {
           <div className="lg:justify-self-end lg:self-end">
             <div className="rounded-[18px] border border-white/15 bg-ink/70 p-6 backdrop-blur-md sm:p-7 lg:max-w-sm">
               <h3 className="text-[0.6875rem] font-bold tracking-[0.18em] text-white/55 uppercase">
-                How the offer works
+                {t.termsHeading}
               </h3>
               <ul className="mt-5 space-y-4">
                 {featuredDeal.terms.map((term) => (

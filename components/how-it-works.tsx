@@ -1,7 +1,10 @@
 import { SectionHeading } from "@/components/section-heading";
-import { processSteps } from "@/data/site";
+import { getDictionary, type Locale } from "@/data/i18n";
 
-export function HowItWorks() {
+export function HowItWorks({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).howItWorks;
+  const processSteps = t.steps;
+
   return (
     <section
       id="how-it-works"
@@ -11,13 +14,14 @@ export function HowItWorks() {
       <div className="shell">
         <SectionHeading
           id="how-it-works-heading"
-          eyebrow="04 — How it works"
+          eyebrow={t.eyebrow}
           title={
             <>
-              From search to <span className="mark-volt">steering wheel.</span>
+              {t.titlePrefix}
+              <span className="mark-volt">{t.titleMark}</span>
             </>
           }
-          subtitle="Three steps, no detours. There is no account to create — you go straight from the search bar to a confirmed booking."
+          subtitle={t.subtitle}
         />
 
         <ol className="mt-16 grid grid-cols-1 gap-12 sm:grid-cols-3 sm:gap-8 lg:gap-12">

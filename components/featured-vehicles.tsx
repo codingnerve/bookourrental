@@ -3,9 +3,12 @@ import { ArrowRight } from "lucide-react";
 
 import { SectionHeading } from "@/components/section-heading";
 import { VehicleCard } from "@/components/vehicle-card";
+import { getDictionary, type Locale } from "@/data/i18n";
 import { vehicles } from "@/data/vehicles";
 
-export function FeaturedVehicles() {
+export function FeaturedVehicles({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).fleet;
+
   return (
     <section
       id="fleet"
@@ -14,19 +17,20 @@ export function FeaturedVehicles() {
     >
       <SectionHeading
         id="fleet-heading"
-        eyebrow="01 — The fleet"
+        eyebrow={t.eyebrow}
         title={
           <>
-            Find a car that <span className="mark-volt">fits the trip.</span>
+            {t.titlePrefix}
+            <span className="mark-volt">{t.titleMark}</span>
           </>
         }
-        subtitle="From efficient city cars to spacious SUVs, choose the vehicle that matches your plans."
+        subtitle={t.subtitle}
         action={
           <Link
             href="/cars"
             className="group inline-flex items-center gap-2 rounded-[14px] border border-ink px-6 py-3.5 text-[0.9375rem] font-bold text-ink transition-colors duration-200 hover:bg-ink hover:text-white"
           >
-            Browse all vehicles
+            {t.browseAll}
             <ArrowRight
               className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
               aria-hidden="true"
@@ -44,7 +48,11 @@ export function FeaturedVehicles() {
               { "--reveal-delay": `${index * 90}ms` } as React.CSSProperties
             }
           >
-            <VehicleCard vehicle={vehicle} priority={index === 0} />
+            <VehicleCard
+              vehicle={vehicle}
+              priority={index === 0}
+              locale={locale}
+            />
           </li>
         ))}
       </ul>

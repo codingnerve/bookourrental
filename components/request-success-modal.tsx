@@ -4,6 +4,7 @@ import { useCallback, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Check, Headset, ShieldCheck, X } from "lucide-react";
 
+import { getDictionary, type Locale } from "@/data/i18n";
 import { companyContact } from "@/data/site";
 
 interface RequestSuccessModalProps {
@@ -11,6 +12,7 @@ interface RequestSuccessModalProps {
   onClose: () => void;
   /** Short recap of what was submitted, e.g. "Miami, FL · Sep 15 – Sep 18". */
   summary?: string;
+  locale?: Locale;
 }
 
 /**
@@ -24,7 +26,9 @@ export function RequestSuccessModal({
   open,
   onClose,
   summary,
+  locale = "en",
 }: RequestSuccessModalProps) {
+  const t = getDictionary(locale).successModal;
   const baseId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -114,7 +118,7 @@ export function RequestSuccessModal({
           ref={closeRef}
           type="button"
           onClick={handleClose}
-          aria-label="Close modal"
+          aria-label={t.close}
           className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800"
         >
           <X className="h-4 w-4" aria-hidden="true" />
@@ -135,7 +139,7 @@ export function RequestSuccessModal({
           id={`${baseId}-title`}
           className="mt-6 text-[1.45rem] leading-tight font-extrabold text-gray-900 sm:text-[1.65rem]"
         >
-          Request Submitted Successfully
+          {t.title}
         </h2>
 
         {/* Body Text */}
@@ -143,7 +147,7 @@ export function RequestSuccessModal({
           id={`${baseId}-body`}
           className="mx-auto mt-3 max-w-sm text-[0.875rem] sm:text-[0.9375rem] leading-relaxed text-gray-600"
         >
-          Thank you. Your car rental request has been received successfully. Our support team will review your details and contact you shortly with available rental options.
+          {t.body}
         </p>
 
         {summary ? (
@@ -156,20 +160,20 @@ export function RequestSuccessModal({
         <div className="mt-6 rounded-2xl bg-[#F8F6F1] border border-[#EFECE4] p-5 text-center">
           <p className="flex items-center justify-center gap-2 text-sm font-bold text-gray-800">
             <Headset className="h-4 w-4 text-gray-700" aria-hidden="true" />
-            Need urgent assistance?
+            {t.urgent}
           </p>
           <a
             href={companyContact.phone.href}
             className="mt-2 block text-xl font-extrabold tracking-tight text-gray-900 hover:text-black sm:text-2xl"
           >
-            Call Now: {companyContact.phone.display}
+            {t.callNow} {companyContact.phone.display}
           </a>
         </div>
 
         {/* Security Footer */}
         <p className="mt-6 flex items-center justify-center gap-2 text-[0.6875rem] font-bold tracking-wider text-gray-500 uppercase">
           <ShieldCheck className="h-4 w-4 text-gray-500" aria-hidden="true" />
-          SECURE INQUIRY - NO SENSITIVE PAYMENT DETAILS
+          {t.secure}
         </p>
       </div>
     </div>,

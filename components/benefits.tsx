@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { Clock, Gauge, Headset, MapPin } from "lucide-react";
 
-import { benefits, type BenefitIcon } from "@/data/site";
+import { getDictionary, type Locale } from "@/data/i18n";
+import type { BenefitIcon } from "@/data/site";
 
 const icons: Record<BenefitIcon, typeof Gauge> = {
   gauge: Gauge,
@@ -10,7 +11,9 @@ const icons: Record<BenefitIcon, typeof Gauge> = {
   headset: Headset,
 };
 
-export function Benefits() {
+export function Benefits({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).benefits;
+
   return (
     <section
       aria-labelledby="benefits-heading"
@@ -25,7 +28,7 @@ export function Benefits() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-tile)] bg-graphite lg:aspect-auto lg:h-[40rem]">
               <Image
                 src="https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?auto=format&fit=crop&w=1200&q=80"
-                alt="Interior of a modern car showing the dashboard and navigation display"
+                alt={t.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 42vw, 92vw"
                 className="object-cover"
@@ -36,8 +39,7 @@ export function Benefits() {
               />
               <div className="absolute inset-x-0 bottom-0 p-7">
                 <p className="text-lg leading-snug font-bold tracking-[-0.02em] text-white">
-                  Every listing shows the same details, in the same place, for
-                  every car.
+                  {t.imageCaption}
                 </p>
               </div>
             </div>
@@ -46,18 +48,18 @@ export function Benefits() {
           {/* Copy */}
           <div>
             <div data-reveal>
-              <p className="eyebrow text-white/60">05 — Why BookOurRental</p>
+              <p className="eyebrow text-white/60">{t.eyebrow}</p>
               <h2
                 id="benefits-heading"
                 className="display-lg mt-5 text-balance text-white"
               >
-                Built around better rental{" "}
-                <span className="mark-volt">decisions.</span>
+                {t.titlePrefix}
+                <span className="mark-volt">{t.titleMark}</span>
               </h2>
             </div>
 
             <ul className="mt-12 divide-y divide-white/10 border-t border-white/10">
-              {benefits.map((benefit, index) => {
+              {t.items.map((benefit, index) => {
                 const Icon = icons[benefit.icon];
                 return (
                   <li

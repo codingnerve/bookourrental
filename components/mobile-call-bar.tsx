@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Phone } from "lucide-react";
 
+import { getDictionary, homeHref, localeFromPathname } from "@/data/i18n";
 import { companyContact } from "@/data/site";
 
 /**
@@ -9,8 +13,14 @@ import { companyContact } from "@/data/site";
  * Hidden from `xl` up, which is exactly where the header starts showing the
  * phone number — so the number is on screen at every width, in one place or
  * the other, never both.
+ *
+ * It lives in the root layout, so it reads the language from the URL rather
+ * than taking a prop.
  */
 export function MobileCallBar() {
+  const locale = localeFromPathname(usePathname());
+  const t = getDictionary(locale).callBar;
+
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md xl:hidden">
       <div className="shell flex items-center gap-2.5 py-3">
@@ -25,10 +35,10 @@ export function MobileCallBar() {
         </a>
 
         <Link
-          href="/#booking"
+          href={`${homeHref[locale]}#booking`}
           className="shrink-0 rounded-[14px] bg-ink px-5 py-3.5 text-[0.9375rem] font-bold text-white transition-colors duration-200 hover:bg-graphite"
         >
-          Book
+          {t.book}
         </Link>
       </div>
     </div>

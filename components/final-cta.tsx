@@ -2,7 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 
-export function FinalCta() {
+import { getDictionary, type Locale } from "@/data/i18n";
+
+export function FinalCta({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).finalCta;
+
   return (
     <section
       aria-labelledby="final-cta-heading"
@@ -15,11 +19,12 @@ export function FinalCta() {
               id="final-cta-heading"
               className="display-xl max-w-xl text-balance text-white"
             >
-              Ready to hit the <span className="mark-volt">road?</span>
+              {t.titlePrefix}
+              <span className="mark-volt">{t.titleMark}</span>
             </h2>
 
             <p className="mt-7 max-w-md text-lg leading-relaxed text-white/70">
-              Choose your location, find your car, and get your trip moving.
+              {t.body}
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -27,7 +32,7 @@ export function FinalCta() {
                 href="#booking"
                 className="group inline-flex items-center justify-center gap-2.5 rounded-[16px] bg-volt px-7 py-4 text-base font-extrabold tracking-[-0.01em] text-ink transition-colors duration-200 hover:bg-volt-deep"
               >
-                Find Your Car
+                {t.primaryCta}
                 <ArrowRight
                   className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-1"
                   aria-hidden="true"
@@ -39,7 +44,7 @@ export function FinalCta() {
                 className="inline-flex items-center justify-center gap-2.5 rounded-[16px] border border-white/30 px-7 py-4 text-base font-bold text-white transition-colors duration-200 hover:border-white/60 hover:bg-white/10"
               >
                 <MapPin className="h-4.5 w-4.5" aria-hidden="true" />
-                Explore Locations
+                {t.secondaryCta}
               </Link>
             </div>
           </div>
@@ -51,7 +56,7 @@ export function FinalCta() {
           >
             <Image
               src="https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1600&q=80"
-              alt="Dark premium sedan photographed from the front under a dramatic clouded sky"
+              alt={t.imageAlt}
               fill
               sizes="(min-width: 1024px) 46vw, 92vw"
               className="object-cover"

@@ -3,22 +3,24 @@ import Link from "next/link";
 import { Wordmark } from "@/components/brand-mark";
 import { MapPin, Phone } from "lucide-react";
 
-import { companyContact, footerColumns, siteConfig } from "@/data/site";
+import { getDictionary, homeHref, type Locale } from "@/data/i18n";
+import { companyContact, siteConfig } from "@/data/site";
 
-export function Footer() {
+export function Footer({ locale = "en" }: { locale?: Locale }) {
+  const t = getDictionary(locale).footer;
+
   return (
     <footer className="surface-dark bg-graphite">
       <div className="shell py-16 lg:py-20">
         <div className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] lg:gap-x-10">
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1">
-            <Link href="/" aria-label="BookOurRental — home">
+            <Link href={homeHref[locale]} aria-label={t.homeAria}>
               <Wordmark tone="dark" />
             </Link>
 
             <p className="mt-6 max-w-xs text-[0.9375rem] leading-relaxed text-white/60">
-              Making car rental discovery simpler, clearer, and easier for every
-              journey.
+              {t.tagline}
             </p>
 
             <address className="mt-7 space-y-3 not-italic">
@@ -48,7 +50,7 @@ export function Footer() {
           </div>
 
           {/* Link columns */}
-          {footerColumns.map((column) => (
+          {t.columns.map((column) => (
             <nav key={column.heading} aria-label={column.heading}>
               <h2 className="text-[0.6875rem] font-bold tracking-[0.18em] text-white/45 uppercase">
                 {column.heading}
@@ -73,12 +75,9 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="shell flex flex-col items-start justify-between gap-4 py-7 sm:flex-row sm:items-center">
           <p className="text-[0.8125rem] text-white/50">
-            © 2026 {siteConfig.name}. All rights reserved.
+            {t.rights(siteConfig.name)}
           </p>
-          <p className="text-[0.8125rem] text-white/40">
-            Rates and availability shown are indicative until confirmed at
-            reservation.
-          </p>
+          <p className="text-[0.8125rem] text-white/40">{t.disclaimer}</p>
         </div>
       </div>
     </footer>
